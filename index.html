@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="sv" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kartago Barbershop | Uppsala</title>
+
+    <!-- Fonts: Playfair Display for elegance, Manrope for modern utility -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            gold: '#D4AF37', // Metallic Gold
+                            dark: '#0f0f0f', // Rich Black
+                            charcoal: '#1a1a1a', // Soft Black
+                            gray: '#2d2d2d',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Manrope"', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'hero-pattern': "url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=2074&auto=format&fit=crop')",
+                        'texture': "url('https://www.transparenttextures.com/patterns/dark-leather.png')"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom scrollbar for premium feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f0f0f;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #D4AF37;
+        }
+
+        /* Fade Animation Classes */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            will-change: opacity, visibility;
+        }
+
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* View Switching Logic */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Custom Map styling fix */
+        .map-container iframe {
+            filter: grayscale(100%) invert(92%) contrast(83%);
+        }
+
+        /* Shimmer effect for AI loading */
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        .loading-shimmer {
+            animation: shimmer 2s infinite linear;
+            background: linear-gradient(to right, #1a1a1a 4%, #333 25%, #1a1a1a 36%);
+            background-size: 1000px 100%;
+        }
+
+        /* Custom File Input Styling */
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body class="bg-brand-dark text-gray-200 font-sans antialiased selection:bg-brand-gold selection:text-black">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-brand-dark/95 backdrop-blur-md border-b border-white/10 transition-all duration-300"
+        id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 cursor-pointer" onclick="router('home')">
+                    <h1 class="font-serif text-2xl font-bold tracking-wider text-white uppercase">
+                        KARTAGO <span class="text-brand-gold">BARBERSHOP</span>
+                    </h1>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <button onclick="router('home')"
+                        class="nav-link text-sm uppercase tracking-widest hover:text-brand-gold transition-colors duration-300 text-brand-gold">Hem</button>
+                    <button onclick="router('services')"
+                        class="nav-link text-sm uppercase tracking-widest hover:text-brand-gold transition-colors duration-300">Tjänster</button>
+                    <button onclick="router('ai-consult')"
+                        class="nav-link text-sm uppercase tracking-widest hover:text-brand-gold transition-colors duration-300 text-brand-gold/80"><i
+                            class="fas fa-sparkles mr-1"></i> AI-Konsult</button>
+                    <button onclick="router('gallery')"
+                        class="nav-link text-sm uppercase tracking-widest hover:text-brand-gold transition-colors duration-300">Galleri</button>
+                    <button onclick="router('about')"
+                        class="nav-link text-sm uppercase tracking-widest hover:text-brand-gold transition-colors duration-300">Om
+                        Oss</button>
+                    <!-- UPDATED: Boka Tid now triggers the external link function -->
+                    <button onclick="openBokadirekt()"
+                        class="bg-brand-gold text-black px-6 py-2 uppercase text-xs font-bold tracking-widest hover:bg-white transition-all duration-300">Boka
+                        Tid</button>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button onclick="toggleMobileMenu()" class="text-white hover:text-brand-gold focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden bg-brand-charcoal border-b border-brand-gold/20">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 text-center">
+                <button onclick="router('home'); toggleMobileMenu()"
+                    class="block w-full px-3 py-4 text-sm uppercase tracking-widest hover:text-brand-gold border-b border-white/5">Hem</button>
+                <button onclick="router('services'); toggleMobileMenu()"
+                    class="block w-full px-3 py-4 text-sm uppercase tracking-widest hover:text-brand-gold border-b border-white/5">Tjänster</button>
+                <button onclick="router('ai-consult'); toggleMobileMenu()"
+                    class="block w-full px-3 py-4 text-sm uppercase tracking-widest text-brand-gold hover:text-white border-b border-white/5"><i
+                        class="fas fa-sparkles mr-1"></i> AI-Konsult</button>
+                <button onclick="router('gallery'); toggleMobileMenu()"
+                    class="block w-full px-3 py-4 text-sm uppercase tracking-widest hover:text-brand-gold border-b border-white/5">Galleri</button>
+                <button onclick="router('about'); toggleMobileMenu()"
+                    class="block w-full px-3 py-4 text-sm uppercase tracking-widest hover:text-brand-gold border-b border-white/5">Om
+                    Oss</button>
+                <!-- UPDATED: Mobile Boka Tid -->
+                <button onclick="openBokadirekt(); toggleMobileMenu()"
+                    class="block w-full px-3 py-4 text-brand-gold font-bold uppercase tracking-widest">Boka Tid</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main id="app-container" class="pt-20">
+
+        <!-- ==================== HOME PAGE ==================== -->
+        <div id="home" class="view-section active">
+            <!-- Hero Section -->
+            <!-- FIX: Changed h-[90vh] to min-h-[90vh] to prevent text clipping on small screens if it wraps -->
+            <section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden py-20 md:py-0">
+                <div class="absolute inset-0 z-0">
+                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2070&auto=format&fit=crop"
+                        alt="Barber Shop" class="w-full h-full object-cover opacity-60">
+                    <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/70 to-transparent">
+                    </div>
+                </div>
+
+                <div class="relative z-10 text-center px-4 max-w-4xl mx-auto fade-in-section w-full">
+                    <p
+                        class="text-brand-gold text-xs md:text-sm lg:text-base uppercase tracking-[0.3em] mb-4 font-bold">
+                        Uppsalas Främsta Herrfrisör</p>
+
+                    <!-- FIX: Responsive Text Sizing -->
+                    <!-- text-4xl (mobile) -> sm:text-5xl (tablet) -> md:text-7xl (laptop) -> lg:text-8xl (desktop) -->
+                    <!-- Added break-words to handle the long Swedish word safely -->
+                    <h1
+                        class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-white mb-6 leading-tight break-words">
+                        Precisionsklippning.<br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">Modern
+                            Stil.</span>
+                    </h1>
+
+                    <p class="text-gray-300 text-base md:text-xl mb-8 md:mb-10 max-w-2xl mx-auto font-light px-4">
+                        Upplev klassisk barberarkonst i kombination med modern styling hos Kartago.
+                    </p>
+
+                    <div
+                        class="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-md mx-auto sm:max-w-none px-4 sm:px-0">
+                        <button onclick="openBokadirekt()"
+                            class="bg-brand-gold text-brand-dark px-6 py-4 md:px-10 uppercase text-xs md:text-sm font-bold tracking-widest hover:bg-white hover:scale-105 transition-all duration-300 w-full sm:w-auto shadow-lg">
+                            Boka Tid
+                        </button>
+                        <button onclick="router('ai-consult')"
+                            class="border border-white/30 text-white px-6 py-4 md:px-10 uppercase text-xs md:text-sm font-bold tracking-widest hover:border-brand-gold hover:text-brand-gold transition-all duration-300 w-full sm:w-auto">
+                            <i class="fas fa-sparkles mr-2 text-brand-gold"></i> AI-Stilkonsult
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="py-24 bg-brand-charcoal relative">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+                        <div
+                            class="p-8 border border-white/5 hover:border-brand-gold/50 transition-colors duration-500 group fade-in-section">
+                            <div
+                                class="w-16 h-16 bg-brand-gray rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-brand-gold transition-colors duration-300">
+                                <i class="fas fa-cut text-2xl text-white group-hover:text-brand-dark"></i>
+                            </div>
+                            <h3 class="text-xl font-serif text-white mb-4">Mästarfrisörer</h3>
+                            <p class="text-gray-400 font-light">Decennier av samlad erfarenhet säkerställer att varje
+                                klippning utförs med kirurgisk precision.</p>
+                        </div>
+                        <div class="p-8 border border-white/5 hover:border-brand-gold/50 transition-colors duration-500 group fade-in-section"
+                            style="transition-delay: 100ms;">
+                            <div
+                                class="w-16 h-16 bg-brand-gray rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-brand-gold transition-colors duration-300">
+                                <i class="fas fa-beer text-2xl text-white group-hover:text-brand-dark"></i>
+                            </div>
+                            <h3 class="text-xl font-serif text-white mb-4">Premium Lounge</h3>
+                            <p class="text-gray-400 font-light">Koppla av med en kaffe eller dryck medan du väntar i vår
+                                exklusiva lounge.</p>
+                        </div>
+                        <div class="p-8 border border-white/5 hover:border-brand-gold/50 transition-colors duration-500 group fade-in-section"
+                            style="transition-delay: 200ms;">
+                            <div
+                                class="w-16 h-16 bg-brand-gray rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-brand-gold transition-colors duration-300">
+                                <i class="fas fa-pump-soap text-2xl text-white group-hover:text-brand-dark"></i>
+                            </div>
+                            <h3 class="text-xl font-serif text-white mb-4">Exklusiva Produkter</h3>
+                            <p class="text-gray-400 font-light">Vi använder uteslutande premiumprodukter som skyddar och
+                                vårdar både hår och hy.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Featured Cuts -->
+            <section class="py-24 bg-brand-dark">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16 fade-in-section">
+                        <h2 class="text-brand-gold text-sm uppercase tracking-widest font-bold mb-2">Vårt Arbete</h2>
+                        <h3 class="text-4xl font-serif text-white">Signaturklippningar</h3>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <!-- Placeholders -->
+                        <div class="aspect-[3/4] overflow-hidden group relative cursor-pointer fade-in-section">
+                            <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?q=80&w=2070&auto=format&fit=crop"
+                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div
+                                class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                <span
+                                    class="text-white font-serif tracking-widest border-b border-brand-gold pb-1">KLASSISK
+                                    FADE</span>
+                            </div>
+                        </div>
+                        <div class="aspect-[3/4] overflow-hidden group relative cursor-pointer fade-in-section">
+                            <img src="https://images.unsplash.com/photo-1593702288056-b6059c47e86e?q=80&w=2070&auto=format&fit=crop"
+                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div
+                                class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                <span
+                                    class="text-white font-serif tracking-widest border-b border-brand-gold pb-1">SKÄGGSKULPTERING</span>
+                            </div>
+                        </div>
+                        <div class="aspect-[3/4] overflow-hidden group relative cursor-pointer fade-in-section">
+                            <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=1976&auto=format&fit=crop"
+                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div
+                                class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                <span
+                                    class="text-white font-serif tracking-widest border-b border-brand-gold pb-1">SAXKLIPPNING</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-12">
+                        <button onclick="router('gallery')"
+                            class="text-white text-sm uppercase tracking-widest hover:text-brand-gold transition-colors">Se
+                            Hela Galleriet <i class="fas fa-arrow-right ml-2"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testimonials -->
+            <section class="py-24 bg-brand-charcoal relative">
+                <div class="max-w-4xl mx-auto px-4 text-center">
+                    <i class="fas fa-quote-right text-4xl text-brand-gold/30 mb-8"></i>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="fade-in-section">
+                            <p class="text-gray-300 italic mb-6">"Bästa klippningen jag fått i Uppsala. Känslan för
+                                detaljer är oslagbar och atmosfären är ren klass."</p>
+                            <h4 class="text-brand-gold font-bold uppercase text-xs tracking-widest">- Johan H.</h4>
+                        </div>
+                        <div class="fade-in-section" style="transition-delay: 100ms;">
+                            <p class="text-gray-300 italic mb-6">"Äntligen ett ställe som förstår hur man hanterar ett
+                                stort skägg. Mitt självklara val varannan vecka."</p>
+                            <h4 class="text-brand-gold font-bold uppercase text-xs tracking-widest">- Mikael T.</h4>
+                        </div>
+                        <div class="fade-in-section" style="transition-delay: 200ms;">
+                            <p class="text-gray-300 italic mb-6">"Hot towel-rakningen är en upplevelse alla borde testa.
+                                Jag gick därifrån som en ny man."</p>
+                            <h4 class="text-brand-gold font-bold uppercase text-xs tracking-widest">- David R.</h4>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA -->
+            <section class="py-20 bg-brand-gold">
+                <div class="max-w-7xl mx-auto px-4 text-center">
+                    <h2 class="text-3xl md:text-5xl font-serif font-bold text-brand-dark mb-6">Redo för en uppgradering?
+                    </h2>
+                    <p class="text-brand-dark/80 mb-8 max-w-xl mx-auto">Tiderna bokas upp snabbt. Säkra din plats idag
+                        för den ultimata groomingupplevelsen.</p>
+                    <div class="flex justify-center w-full max-w-md mx-auto sm:max-w-none">
+                        <button onclick="openBokadirekt()"
+                            class="bg-brand-dark text-white px-6 py-4 md:px-10 uppercase text-sm font-bold tracking-widest hover:bg-white hover:text-brand-dark transition-all duration-300 shadow-xl w-full sm:w-auto">
+                            Boka Nu
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ==================== AI CONSULTATION PAGE (GEMINI POWERED) ==================== -->
+        <div id="ai-consult" class="view-section">
+            <div class="bg-brand-charcoal py-20 px-4 text-center border-b border-white/5">
+                <h1 class="text-4xl md:text-6xl font-serif text-white mb-4 fade-in-section">AI-Stilkonsult <i
+                        class="fas fa-sparkles text-brand-gold text-3xl align-top"></i></h1>
+                <p class="text-gray-400 max-w-2xl mx-auto fade-in-section">Osäker på din nästa look? Ladda upp en bild
+                    eller välj dina drag för att låta vår AI-Barberare analysera din profil.</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto px-4 py-16">
+                <div class="grid md:grid-cols-2 gap-12">
+                    <!-- Form -->
+                    <div class="fade-in-section">
+                        <div class="bg-brand-charcoal p-8 border border-white/5 shadow-xl relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-20 h-20 bg-brand-gold/10 rounded-bl-full"></div>
+                            <h3 class="text-2xl font-serif text-white mb-6">Din Profil</h3>
+
+                            <form id="ai-form" onsubmit="handleAIConsult(event)">
+                                <!-- IMAGE UPLOAD SECTION -->
+                                <div class="mb-8 p-4 border-2 border-dashed border-gray-600 rounded-lg text-center hover:border-brand-gold transition-colors relative"
+                                    id="drop-area">
+                                    <input type="file" id="userImage" accept="image/*"
+                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                        onchange="previewImage(this)">
+                                    <div id="upload-label">
+                                        <i class="fas fa-camera text-3xl text-gray-500 mb-2"></i>
+                                        <p class="text-sm text-brand-gold font-bold uppercase tracking-widest">Ta en
+                                            selfie / Ladda upp</p>
+                                        <p class="text-xs text-gray-500 mt-1">Vi analyserar din ansiktsform automatiskt
+                                        </p>
+                                    </div>
+                                    <img id="image-preview"
+                                        class="hidden w-full h-48 object-cover rounded-md mt-2 relative z-0">
+                                </div>
+
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="h-px bg-gray-700 flex-1"></span>
+                                    <span class="text-xs text-gray-500 uppercase px-2">Eller välj manuellt</span>
+                                    <span class="h-px bg-gray-700 flex-1"></span>
+                                </div>
+
+                                <div class="mb-6">
+                                    <label
+                                        class="block text-xs uppercase tracking-widest text-brand-gold mb-2">Ansiktsform</label>
+                                    <select id="faceShape"
+                                        class="w-full bg-brand-dark border border-gray-700 text-white p-4 focus:outline-none focus:border-brand-gold transition-colors appearance-none">
+                                        <option value="Inte vald">Låt AI Analysera (eller välj här)</option>
+                                        <option value="Oval">Oval (Balanserad)</option>
+                                        <option value="Fyrkantig">Fyrkantig (Stark käklinje)</option>
+                                        <option value="Rund">Rund (Mjuka drag)</option>
+                                        <option value="Hjärtformad">Hjärtformad (Bred panna, smal haka)</option>
+                                        <option value="Avlång">Avlång (Långt ansikte)</option>
+                                        <option value="Diamant">Diamant (Breda kindben)</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-8">
+                                    <label class="block text-xs uppercase tracking-widest text-brand-gold mb-2">Önskad
+                                        Stil/Vibe</label>
+                                    <select id="styleVibe"
+                                        class="w-full bg-brand-dark border border-gray-700 text-white p-4 focus:outline-none focus:border-brand-gold transition-colors appearance-none">
+                                        <option value="Klassisk & Tidlös">Klassisk & Tidlös (Gentleman)</option>
+                                        <option value="Modern & Trendig">Modern & Trendig (Fade/Crop)</option>
+                                        <option value="Professionell">Professionell (Business)</option>
+                                        <option value="Vågad & Edgy">Vågad & Edgy (Statement)</option>
+                                        <option value="Lättskött">Lättskött (Low maintenance)</option>
+                                        <option value="Rugged">Rugged (Maskulin/Vild)</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" id="ai-submit-btn"
+                                    class="w-full bg-brand-gold text-black font-bold uppercase tracking-widest py-4 hover:bg-white transition-all duration-300 flex justify-center items-center group">
+                                    <span>Skapa Min Look</span>
+                                    <i class="fas fa-sparkles ml-2 group-hover:animate-spin"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Result Area -->
+                    <div class="fade-in-section" style="transition-delay: 100ms;">
+                        <div
+                            class="h-full bg-brand-dark border border-brand-gold/30 p-8 relative min-h-[400px] flex flex-col">
+
+                            <!-- Initial State -->
+                            <div id="ai-result-placeholder"
+                                class="flex-1 flex flex-col items-center justify-center text-center opacity-50">
+                                <i class="fas fa-robot text-6xl mb-4 text-gray-600"></i>
+                                <p class="text-gray-400 font-serif text-xl">Väntar på din input...</p>
+                            </div>
+
+                            <!-- Loading State -->
+                            <div id="ai-loading"
+                                class="hidden flex-1 flex flex-col items-center justify-center text-center">
+                                <div
+                                    class="w-16 h-16 border-4 border-brand-gold border-t-transparent rounded-full animate-spin mb-6">
+                                </div>
+                                <h3 class="text-white font-serif text-xl mb-2">Konsulterar AI-Barberaren...</h3>
+                                <p class="text-gray-400 text-sm">Analyserar ansiktsstruktur och trender.</p>
+                            </div>
+
+                            <!-- Success State -->
+                            <div id="ai-result-content" class="hidden">
+                                <div class="flex items-center mb-6 pb-4 border-b border-white/10">
+                                    <div
+                                        class="w-12 h-12 bg-brand-gold rounded-full flex items-center justify-center text-black mr-4">
+                                        <i class="fas fa-scissors"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-white font-bold uppercase text-sm tracking-widest">
+                                            Rekommendation</h3>
+                                        <p class="text-brand-gold text-xs">Skapad av Kartago AI</p>
+                                    </div>
+                                </div>
+                                <div id="ai-text-output" class="text-gray-300 space-y-4 font-light leading-relaxed">
+                                    <!-- Gemini content goes here -->
+                                </div>
+                                <div class="mt-8 pt-6 border-t border-white/10 text-center">
+                                    <button onclick="openBokadirekt()"
+                                        class="text-white hover:text-brand-gold uppercase text-xs font-bold tracking-widest transition-colors">
+                                        Boka denna stil <i class="fas fa-arrow-right ml-1"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SERVICES PAGE ==================== -->
+        <div id="services" class="view-section">
+            <div class="bg-brand-charcoal py-20 px-4 text-center border-b border-white/5">
+                <h1 class="text-4xl md:text-6xl font-serif text-white mb-4 fade-in-section">Tjänster & Priser</h1>
+                <p class="text-gray-400 max-w-2xl mx-auto fade-in-section">Expertbehandlingar utformade för den moderna
+                    gentlemannen.</p>
+            </div>
+
+            <div class="max-w-3xl mx-auto px-4 py-20">
+                <!-- Hair -->
+                <div class="mb-16 fade-in-section">
+                    <h2 class="text-brand-gold text-2xl font-serif mb-8 border-b border-white/10 pb-2">Hår</h2>
+                    <div class="space-y-6">
+                        <div class="flex items-baseline justify-between group">
+                            <div class="flex-1">
+                                <h3
+                                    class="text-xl text-white font-medium group-hover:text-brand-gold transition-colors">
+                                    Executive Klippning</h3>
+                                <p class="text-sm text-gray-500 mt-1">Konsultation, tvätt, precisionsklippning och
+                                    styling.</p>
+                            </div>
+                            <div class="flex-1 border-b border-dotted border-gray-700 mx-4"></div>
+                            <div class="text-xl text-white font-serif">550 kr</div>
+                        </div>
+                        <div class="flex items-baseline justify-between group">
+                            <div class="flex-1">
+                                <h3
+                                    class="text-xl text-white font-medium group-hover:text-brand-gold transition-colors">
+                                    Skin Fade</h3>
+                                <p class="text-sm text-gray-500 mt-1">Sömlös övergång, rakknivslinjer.</p>
+                            </div>
+                            <div class="flex-1 border-b border-dotted border-gray-700 mx-4"></div>
+                            <div class="text-xl text-white font-serif">490 kr</div>
+                        </div>
+                        <div class="flex items-baseline justify-between group">
+                            <div class="flex-1">
+                                <h3
+                                    class="text-xl text-white font-medium group-hover:text-brand-gold transition-colors">
+                                    Maskinklippning</h3>
+                                <p class="text-sm text-gray-500 mt-1">Samma längd över hela huvudet, putsad nacke.</p>
+                            </div>
+                            <div class="flex-1 border-b border-dotted border-gray-700 mx-4"></div>
+                            <div class="text-xl text-white font-serif">350 kr</div>
+                        </div>
+                        <div class="flex items-baseline justify-between group">
+                            <div class="flex-1">
+                                <h3
+                                    class="text-xl text-white font-medium group-hover:text-brand-gold transition-colors">
+                                    Barnklippning (Under 12)</h3>
+                                <p class="text-sm text-gray-500 mt-1">Klassisk klippning för den yngre generationen.</p>
+                            </div>
+                            <div class="flex-1 border-b border-dotted border-gray-700 mx-4"></div>
+                            <div class="text-xl text-white font-serif">390 kr</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Beard -->
+                <div class="mb-16 fade-in-section">
+                    <h2 class="text-brand-gold text-2xl font-serif mb-8 border-b border-white/10 pb-2">Skägg & Rakning
+                    </h2>
+                    <div class="space-y-6">
+                        <div class="flex items-baseline justify-between group">
+                            <div class="flex-1">
+                                <h3
+                                    class="text-xl text-white font-medium group-hover:text-brand-gold transition-colors">
+                                    Skäggtrim & Skulptering</h3>
+                                <p class="text-sm text-gray-500 mt-1">Formning, trimning och linjer med kniv, avslutas
+                                    med olja.</p>
+                            </div>
+                            <div class="flex-1 border-b border-dotted border-gray-700 mx-4"></div>
+                            <div class="text-xl text-white font-serif">400 kr</div>
+                        </div>
+                        <div class="flex items-baseline justify-between group">
+                            <div class="flex-1">
+                                <h3
+                                    class="text-xl text-white font-medium group-hover:text-brand-gold transition-colors">
+                                    Hot Towel Rakning</h3>
+                                <p class="text-sm text-gray-500 mt-1">Traditionell rakning med kniv, varma handdukar,
+                                    ansiktsmassage.</p>
+                            </div>
+                            <div class="flex-1 border-b border-dotted border-gray-700 mx-4"></div>
+                            <div class="text-xl text-white font-serif">550 kr</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Packages -->
+                <div class="p-8 border border-brand-gold/30 bg-brand-charcoal/50 fade-in-section">
+                    <h2 class="text-brand-gold text-2xl font-serif mb-4 text-center">Helbehandling</h2>
+                    <p class="text-gray-300 text-center mb-6">Executive Klippning + Hot Towel Rakning + Ansiktsskrubb
+                    </p>
+                    <div class="text-center text-3xl text-white font-serif font-bold mb-6">950 kr</div>
+                    <div class="text-center">
+                        <button onclick="openBokadirekt()"
+                            class="bg-white text-black px-8 py-3 uppercase text-xs font-bold tracking-widest hover:bg-brand-gold transition-colors">Boka
+                            Detta</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== GALLERY PAGE ==================== -->
+        <div id="gallery" class="view-section">
+            <div class="bg-brand-charcoal py-16 px-4 text-center">
+                <h1 class="text-4xl md:text-6xl font-serif text-white mb-4">Vår Portfolio</h1>
+                <!-- Filters -->
+                <div class="flex flex-wrap justify-center gap-4 mt-8">
+                    <button
+                        class="text-brand-gold border-b border-brand-gold pb-1 text-sm uppercase tracking-widest">Alla</button>
+                    <button
+                        class="text-gray-400 hover:text-brand-gold transition-colors pb-1 text-sm uppercase tracking-widest">Klippningar</button>
+                    <button
+                        class="text-gray-400 hover:text-brand-gold transition-colors pb-1 text-sm uppercase tracking-widest">Skägg</button>
+                    <button
+                        class="text-gray-400 hover:text-brand-gold transition-colors pb-1 text-sm uppercase tracking-widest">Atmosfär</button>
+                </div>
+            </div>
+
+            <!-- Masonry Grid -->
+            <div class="max-w-7xl mx-auto px-4 py-10">
+                <div class="columns-1 md:columns-3 lg:columns-4 gap-4 space-y-4">
+                    <!-- Images (Placeholders) -->
+                    <div class="break-inside-avoid relative group cursor-pointer" onclick="openLightbox(this)">
+                        <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=1000"
+                            class="w-full rounded-sm grayscale group-hover:grayscale-0 transition-all duration-500">
+                    </div>
+                    <div class="break-inside-avoid relative group cursor-pointer" onclick="openLightbox(this)">
+                        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1000"
+                            class="w-full rounded-sm grayscale group-hover:grayscale-0 transition-all duration-500">
+                    </div>
+                    <div class="break-inside-avoid relative group cursor-pointer" onclick="openLightbox(this)">
+                        <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?q=80&w=1000"
+                            class="w-full rounded-sm grayscale group-hover:grayscale-0 transition-all duration-500">
+                    </div>
+                    <div class="break-inside-avoid relative group cursor-pointer" onclick="openLightbox(this)">
+                        <img src="https://images.unsplash.com/photo-1593702288056-b6059c47e86e?q=80&w=1000"
+                            class="w-full rounded-sm grayscale group-hover:grayscale-0 transition-all duration-500">
+                    </div>
+                    <div class="break-inside-avoid relative group cursor-pointer" onclick="openLightbox(this)">
+                        <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=1000"
+                            class="w-full rounded-sm grayscale group-hover:grayscale-0 transition-all duration-500">
+                    </div>
+                    <div class="break-inside-avoid relative group cursor-pointer" onclick="openLightbox(this)">
+                        <img src="https://images.unsplash.com/photo-1635273051937-92a433a61c3e?q=80&w=1000"
+                            class="w-full rounded-sm grayscale group-hover:grayscale-0 transition-all duration-500">
+                    </div>
+                    <div class="break-inside-avoid relative group cursor-pointer" onclick="openLightbox(this)">
+                        <img src="https://images.unsplash.com/photo-1534353436294-0dbd4bdac845?q=80&w=1000"
+                            class="w-full rounded-sm grayscale group-hover:grayscale-0 transition-all duration-500">
+                    </div>
+                    <div class="break-inside-avoid relative group cursor-pointer" onclick="openLightbox(this)">
+                        <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?q=80&w=1000"
+                            class="w-full rounded-sm grayscale group-hover:grayscale-0 transition-all duration-500">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== ABOUT PAGE ==================== -->
+        <div id="about" class="view-section">
+            <div class="max-w-7xl mx-auto px-4 py-20">
+                <div class="grid md:grid-cols-2 gap-16 items-center mb-20 fade-in-section">
+                    <div>
+                        <h2 class="text-brand-gold text-sm uppercase tracking-widest font-bold mb-2">Vår Historia</h2>
+                        <h1 class="text-4xl md:text-5xl font-serif text-white mb-6">Mer Än Bara En Klippning</h1>
+                        <p class="text-gray-300 leading-relaxed mb-6">
+                            Kartago Barbershop grundades med övertygelsen om att en barbershop ska vara en fristad. Vi
+                            ville återskapa känslan av den klassiska kvartersbarberaren – en plats där man minns ditt
+                            namn, där samtalen flödar och där hantverket aldrig kompromissas.
+                        </p>
+                        <p class="text-gray-300 leading-relaxed">
+                            Beläget i hjärtat av Uppsala kombinerar vi svensk minimalism med klassiska barberartekniker
+                            för att ta hand om den moderna gentlemannen.
+                        </p>
+                    </div>
+                    <div class="relative">
+                        <div class="border-2 border-brand-gold absolute top-4 -right-4 w-full h-full z-0"></div>
+                        <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2070"
+                            class="relative z-10 w-full grayscale hover:grayscale-0 transition-all duration-500 shadow-2xl">
+                    </div>
+                </div>
+
+                <div class="text-center mb-12 fade-in-section">
+                    <h2 class="text-3xl font-serif text-white">Teamet</h2>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div
+                        class="bg-brand-charcoal p-6 text-center group hover:-translate-y-2 transition-transform duration-300 fade-in-section">
+                        <!-- Image removed for cleaner typography look -->
+                        <h3 class="text-xl text-white font-serif mb-2">Marcus Thorne</h3>
+                        <p class="text-brand-gold text-xs uppercase tracking-widest mb-3">Master Barber</p>
+                        <p class="text-gray-400 text-sm">Specialist på klassiska saxklippningar och hot towel-rakning.
+                            15 års erfarenhet.</p>
+                    </div>
+                    <div class="bg-brand-charcoal p-6 text-center group hover:-translate-y-2 transition-transform duration-300 fade-in-section"
+                        style="transition-delay: 100ms;">
+                        <!-- Image removed for cleaner typography look -->
+                        <h3 class="text-xl text-white font-serif mb-2">Elias Berg</h3>
+                        <p class="text-brand-gold text-xs uppercase tracking-widest mb-3">Senior Stylist</p>
+                        <p class="text-gray-400 text-sm">Vår fade-mästare. Känd för detaljerad skäggskulptering och
+                            moderna texturer.</p>
+                    </div>
+                    <div class="bg-brand-charcoal p-6 text-center group hover:-translate-y-2 transition-transform duration-300 fade-in-section"
+                        style="transition-delay: 200ms;">
+                        <!-- Image removed for cleaner typography look -->
+                        <h3 class="text-xl text-white font-serif mb-2">Sarah Lind</h3>
+                        <p class="text-brand-gold text-xs uppercase tracking-widest mb-3">Frisör</p>
+                        <p class="text-gray-400 text-sm">Expert på styling av längre hår och hudvårdsbehandlingar.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== BOOKING (EXTERNAL LINK) ==================== -->
+        <!-- 
+            Pro Tip: I've replaced the mock booking page with a smart redirect.
+            If you get the widget code from Bokadirekt in the future, paste it inside the
+            'bokadirekt-container' div below and remove the redirect script.
+        -->
+        <div id="booking" class="view-section">
+            <div class="min-h-screen bg-brand-charcoal flex items-center justify-center p-4">
+                <div class="bg-brand-dark max-w-2xl w-full border border-white/10 shadow-2xl p-8 text-center">
+                    <div id="bokadirekt-container">
+                        <!-- IF YOU GET THE WIDGET CODE, PASTE IT HERE -->
+                    </div>
+
+                    <h2 class="text-2xl font-serif text-white mb-4">Öppnar Bokning...</h2>
+                    <p class="text-gray-400 mb-8">Vi tar dig direkt till vår bokningskalender hos Bokadirekt.</p>
+                    <div
+                        class="w-16 h-16 border-4 border-brand-gold border-t-transparent rounded-full animate-spin mx-auto mb-8">
+                    </div>
+
+                    <button onclick="openBokadirekt()"
+                        class="bg-brand-gold text-black px-8 py-3 uppercase text-xs font-bold tracking-widest hover:bg-white transition-colors">
+                        Öppna manuellt om inget händer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-white/10 py-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h2 class="font-serif text-2xl text-white mb-6 tracking-wider uppercase">KARTAGO <span
+                    class="text-brand-gold">BARBERSHOP</span></h2>
+            <div class="flex justify-center space-x-6 mb-8">
+                <a href="#" class="text-gray-400 hover:text-brand-gold text-xl transition-colors"><i
+                        class="fab fa-instagram"></i></a>
+                <a href="#" class="text-gray-400 hover:text-brand-gold text-xl transition-colors"><i
+                        class="fab fa-facebook"></i></a>
+                <a href="#" class="text-gray-400 hover:text-brand-gold text-xl transition-colors"><i
+                        class="fab fa-twitter"></i></a>
+            </div>
+            <p class="text-gray-600 text-sm uppercase tracking-widest">© 2025 Kartago Barbershop. Alla Rättigheter
+                Förbehållna.</p>
+        </div>
+    </footer>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="fixed inset-0 z-[60] bg-black/95 hidden flex items-center justify-center p-4"
+        onclick="closeLightbox()">
+        <button class="absolute top-4 right-4 text-white text-4xl hover:text-brand-gold">&times;</button>
+        <img id="lightbox-img" src="" class="max-h-[90vh] max-w-full shadow-2xl border border-white/10">
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // State Management
+        const state = {
+            currentPage: 'home',
+            isMenuOpen: false
+        };
+
+        // NEW: Bokadirekt Handler
+        function openBokadirekt() {
+            window.open('https://www.bokadirekt.se/places/kartago-barbershop-51766?hl=en-SE', '_blank');
+        }
+
+        // Navigation Router
+        function router(pageId) {
+            // Update Active Link Styles
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                const linkText = link.textContent.toLowerCase();
+                if (
+                    (pageId === 'home' && linkText.includes('hem')) ||
+                    (pageId === 'services' && linkText.includes('tjänster')) ||
+                    (pageId === 'gallery' && linkText.includes('galleri')) ||
+                    (pageId === 'about' && linkText.includes('om oss')) ||
+                    (pageId === 'ai-consult' && linkText.includes('ai-konsult'))
+                ) {
+                    link.classList.add('text-brand-gold');
+                    if (pageId === 'ai-consult') link.classList.remove('text-brand-gold/80');
+                } else {
+                    link.classList.remove('text-brand-gold');
+                    if (linkText.includes('ai-konsult')) link.classList.add('text-brand-gold/80');
+                }
+            });
+
+            // Hide all sections
+            document.querySelectorAll('.view-section').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Show target section
+            const target = document.getElementById(pageId);
+            if (target) {
+                target.classList.add('active');
+                window.scrollTo(0, 0);
+
+                // Trigger animations for the new page
+                setTimeout(() => {
+                    initAnimations();
+                }, 100);
+            }
+
+            state.currentPage = pageId;
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            state.isMenuOpen = !state.isMenuOpen;
+            if (state.isMenuOpen) {
+                menu.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+            }
+        }
+
+        // Lightbox Logic
+        function openLightbox(element) {
+            const img = element.querySelector('img');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+
+            lightboxImg.src = img.src.replace('w=1000', 'w=1600');
+            lightbox.classList.remove('hidden');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.add('hidden');
+        }
+
+        // Scroll Animation Observer
+        function initAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-in-section').forEach((el) => {
+                observer.observe(el);
+            });
+        }
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-brand-dark', 'shadow-lg');
+                nav.classList.remove('bg-brand-dark/95', 'backdrop-blur-md');
+            } else {
+                nav.classList.remove('bg-brand-dark', 'shadow-lg');
+                nav.classList.add('bg-brand-dark/95', 'backdrop-blur-md');
+            }
+        });
+
+        // ================= GEMINI API INTEGRATION =================
+
+        let selectedImageBase64 = null;
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.getElementById('image-preview');
+                    img.src = e.target.result;
+                    img.classList.remove('hidden');
+
+                    document.getElementById('upload-label').classList.add('hidden');
+
+                    // Compress and save
+                    compressImage(input.files[0], 800).then(base64 => {
+                        selectedImageBase64 = base64;
+                    });
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Client-side Compression to save tokens and bandwidth
+        function compressImage(file, maxWidth) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const elem = document.createElement('canvas');
+                        const scaleFactor = maxWidth / img.width;
+                        elem.width = maxWidth;
+                        elem.height = img.height * scaleFactor;
+                        const ctx = elem.getContext('2d');
+                        ctx.drawImage(img, 0, 0, elem.width, elem.height);
+                        resolve(elem.toDataURL('image/jpeg', 0.8)); // 80% quality JPG
+                    };
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        async function handleAIConsult(event) {
+            event.preventDefault();
+
+            const faceShape = document.getElementById('faceShape').value;
+            const styleVibe = document.getElementById('styleVibe').value;
+
+            const placeholder = document.getElementById('ai-result-placeholder');
+            const loading = document.getElementById('ai-loading');
+            const result = document.getElementById('ai-result-content');
+            const output = document.getElementById('ai-text-output');
+            const submitBtn = document.getElementById('ai-submit-btn');
+
+            // UI State: Loading
+            placeholder.classList.add('hidden');
+            result.classList.add('hidden');
+            loading.classList.remove('hidden');
+            submitBtn.disabled = true;
+            submitBtn.querySelector('span').innerText = "Analyserar...";
+
+            // Prepare Payload for Backend
+            let payload = {
+                styleVibe: styleVibe,
+                faceShape: faceShape
+            };
+
+            if (selectedImageBase64) {
+                // Send raw base64 without the data:image prefix
+                payload.imageBase64 = selectedImageBase64.split(',')[1];
+            }
+
+            try {
+                // Call Secure Backend
+                // Note: Netlify functions are accessible at /.netlify/functions/function-name
+                const response = await fetch('/.netlify/functions/analyze-look', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error('Server Error');
+
+                const data = await response.json();
+
+                // Robust check for data structure from Gemini response
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Kunde inte generera svar. Försök igen.";
+
+                // Process text for display
+                const formattedText = text.split('\n').filter(line => line.trim() !== '').map(line => `<p>${line}</p>`).join('');
+
+                // UI State: Success
+                output.innerHTML = formattedText;
+                loading.classList.add('hidden');
+                result.classList.remove('hidden');
+
+            } catch (error) {
+                console.error(error);
+                loading.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+                alert("Något gick fel med AI-barberaren. Försök igen senare.");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.querySelector('span').innerText = "Skapa Min Look";
+            }
+        }
+
+        // Initial Load
+        document.addEventListener('DOMContentLoaded', () => {
+            initAnimations();
+
+            // Highlight Home initially
+            const homeLinks = Array.from(document.querySelectorAll('.nav-link')).filter(l => l.textContent.trim() === 'Hem');
+            if (homeLinks.length > 0) homeLinks[0].classList.add('text-brand-gold');
+        });
+
+    </script>
+</body>
+
+</html>
