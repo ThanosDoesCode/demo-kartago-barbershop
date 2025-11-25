@@ -68,7 +68,7 @@ exports.handler = async function(event, context) {
         // 5. Return result
         return {
             statusCode: 200,
-            body: JSON.stringify(data) // Fixed missing parenthesis here
+            body: JSON.stringify(data) 
         };
 
     } catch (error) {
